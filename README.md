@@ -68,14 +68,25 @@ User query
 
 ## Tech stack
 
-- **Frontend:** Next.js 15 (App Router) + React 19 + Tailwind + shadcn/ui — deployed on Vercel
+- **Frontend:** Next.js 15 (App Router) + React 19 + Tailwind v4 + shadcn/ui (heavily customized) + Framer Motion 12 + cmdk + Phosphor icons — deployed on Vercel
+- **Design system:** see [`DESIGN.md`](./DESIGN.md). All UI work is bound by the rules there (no `Inter`, no `#000000`, no AI-purple, no centered hero, etc.).
 - **Runtime:** Node 24 / Edge
-- **AI:** Anthropic Claude (Sonnet 4.6 for agents, Haiku 4.5 for router/classifier, Opus 4.7 for synthesis on complex queries)
-- **Browser automation:** Stagehand (Browserbase) for ActionAgent
-- **Streaming:** Server-Sent Events for live agent updates + Vercel AI SDK for UI streaming
-- **Generative UI:** Streamed JSX components rendered via `react-jsx-runtime`
-- **Memory:** SQLite (libsql/Turso) + embeddings via Voyage or OpenAI
-- **Voice (stretch):** Whisper + TTS for hands-free queries
+- **LLMs (free-tier-first):**
+  - Router/classifier — **Groq Llama 3.1 8B Instant** (sub-100ms, 14400 req/day free)
+  - Specialist agents — **Groq Llama 3.3 70B Versatile** (500+ tok/s tool use)
+  - Synthesizer — **`gemini-3-flash-preview`** (Gemini, 1500/day free)
+  - Hard reasoning — **Groq DeepSeek R1 Distill 70B** (free)
+  - Code / canvas-template gen — **Groq Qwen 2.5 Coder 32B** (free)
+  - Vision — **`gemini-3-flash-preview`** (multimodal native)
+  - Premium fallback (demo only) — **OpenRouter → Claude Sonnet 4.6** (~$5 buffer)
+- **Voice:** Groq Whisper Large v3 (STT, free, ~300ms) + Kokoro TTS local web worker (free, open source)
+- **Browser automation:** Local Playwright + LLM-driven action prompts; Browserbase optional
+- **Streaming:** SSE per agent + Vercel AI SDK 5 `experimental_useObject` for typed UI streaming
+- **Generative UI:** Streamed JSX (allow-listed component subset), rendered via custom JSX runtime sandbox
+- **Memory:** Turso (libSQL) + Gemini text-embedding (free) for agent memory + watchers
+- **Background:** Inngest (50k events/mo free) for cron + queues
+- **Mail / notifications:** Resend (3k/mo free) + Web Push fallback
+- **Search:** Tavily (1k/mo free, primary) + Brave (2k/mo free, backup) + Reddit API for critic agent
 
 ## MVP scope (24–48h grind)
 

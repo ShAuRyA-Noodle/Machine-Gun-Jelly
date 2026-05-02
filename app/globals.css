@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+@theme {
+  /* Palette — locked by DESIGN.md */
+  --color-canvas-ink: #0b0b0f;
+  --color-surface-slate: #13131a;
+  --color-surface-raised: #1a1a22;
+  --color-charcoal-text: #ededef;
+  --color-muted-text: #8b8b92;
+  --color-subtle-text: #5a5a63;
+  --color-accent-ember: #ff6a3d;
+  --color-status-live: #3ddc97;
+  --color-status-warn: #f5c84b;
+  --color-status-error: #e5484d;
+
+  --color-whisper-border: rgb(255 255 255 / 0.06);
+  --color-whisper-border-strong: rgb(255 255 255 / 0.10);
+
+  /* Type */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Radii */
+  --radius-card: 1.75rem;
+  --radius-pill: 9999px;
+
+  /* Spring (used via tailwind animation utilities) */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body {
+    background: var(--color-canvas-ink);
+    color: var(--color-charcoal-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-accent-ember);
+    color: var(--color-canvas-ink);
+  }
+
+  /* Focus ring — DESIGN.md spec: 2px Ember at 50% opacity offset */
+  :focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--color-accent-ember) 60%, transparent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* Scrollbars: subtle */
+  *::-webkit-scrollbar { width: 10px; height: 10px; }
+  *::-webkit-scrollbar-thumb {
+    background: var(--color-whisper-border-strong);
+    border-radius: 9999px;
+  }
+  *::-webkit-scrollbar-track { background: transparent; }
+}
+
+@layer utilities {
+  /* Diffusion shadow (dark surface) */
+  .shadow-diffusion {
+    box-shadow:
+      0 20px 40px -15px rgb(0 0 0 / 0.6),
+      0 0 0 1px var(--color-whisper-border);
+  }
+
+  /* Inner refraction edge — for any glass surface */
+  .edge-refraction {
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.05),
+      inset 0 -1px 0 rgb(0 0 0 / 0.4);
+  }
+
+  /* Grain — fixed overlay only, never on scrolling containers */
+  .grain-fixed {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.45'/></svg>");
+    mix-blend-mode: overlay;
+    opacity: 0.06;
+  }
+
+  /* Skeletal shimmer */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgb(255 255 255 / 0.04) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s linear infinite;
+  }
+
+  /* Breathing pulse — agent live state */
+  .pulse-live {
+    animation: pulse-live 1.8s ease-in-out infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.92); }
+}

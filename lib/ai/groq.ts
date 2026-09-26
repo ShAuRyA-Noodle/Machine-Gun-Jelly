@@ -25,25 +25,25 @@ type GroqModel = ReturnType<GroqProvider>;
 
 /**
  * Model registry. Centralized so we swap in one place.
- * All Groq free-tier eligible. Models are created lazily per getter so the
- * registry can be imported without instantiating the provider.
+ * Model IDs match Groq's current production catalog. Models are created lazily
+ * per getter so the registry can be imported without instantiating the provider.
  */
 export const MODELS = {
-  // Sub-100ms classifier
+  // Lightweight classifier
   get router(): GroqModel {
-    return groq("llama-3.1-8b-instant");
+    return groq("openai/gpt-oss-20b");
   },
-  // 500+ tok/s tool-using specialist
+  // Configurable to accommodate Groq account-specific model permissions.
   get specialist(): GroqModel {
-    return groq("llama-3.3-70b-versatile");
+    return groq(env.GROQ_MODEL);
   },
   // Reasoning when needed
   get reasoner(): GroqModel {
-    return groq("deepseek-r1-distill-llama-70b");
+    return groq("openai/gpt-oss-120b");
   },
   // JSX / canvas template generation
   get coder(): GroqModel {
-    return groq("qwen-2.5-coder-32b");
+    return groq("openai/gpt-oss-120b");
   },
   // Voice STT
   get whisper(): GroqModel {

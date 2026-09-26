@@ -70,6 +70,7 @@ export function CommandBar() {
         acc += decoder.decode(chunk, { stream: true });
         setReply(acc);
       }
+      if (!acc.trim()) throw new Error("The assistant returned no response. Please try again.");
     } catch (err) {
       setReply(`error: ${(err as Error).message}`);
     } finally {

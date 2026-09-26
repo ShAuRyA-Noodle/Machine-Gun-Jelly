@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const schema = z.object({
   GROQ_API_KEY: z.string().min(1),
+  GROQ_MODEL: z.string().min(1).default("openai/gpt-oss-120b"),
   GEMINI_API_KEY: z.string().min(1),
   GEMINI_MODEL: z.string().default("gemini-3-flash-preview"),
   OPENROUTER_API_KEY: z.string().optional(),

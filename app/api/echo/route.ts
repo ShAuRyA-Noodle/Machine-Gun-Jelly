@@ -1,5 +1,6 @@
 import { streamText } from "ai";
 import { MODELS } from "@/lib/ai/groq";
+import { env } from "@/lib/env";
 import { z } from "zod";
 
 const Body = z.object({
@@ -17,6 +18,12 @@ export async function POST(req: Request) {
   const parsed = Body.safeParse(json);
   if (!parsed.success) {
     return new Response("invalid body", { status: 400 });
+  }
+
+  try {
+    if (!env.GROQ_API_KEY) throw new Error("missing Groq configuration");
+  } catch {
+    return new Response("assistant temporarily unavailable", { status: 503 });
   }
 
   const result = streamText({

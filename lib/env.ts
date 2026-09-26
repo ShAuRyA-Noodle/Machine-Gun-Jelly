@@ -30,27 +30,21 @@ const schema = z.object({
 
 type Env = z.infer<typeof schema>;
 
-let cached: Env | null = null;
-
 /**
- * Validate lazily, on first access, instead of at module load.
- * This keeps `next build` (and CI / fresh clones) from failing when the
- * environment is not yet populated, while still throwing the moment any
- * value is actually read at request time.
+ * Validate each integration when it is used. The echo route only needs Groq;
+ * unrelated credentials should not stop it from serving requests.
  */
-function load(): Env {
-  if (cached) return cached;
-  const parsed = schema.safeParse(process.env);
+function load<K extends keyof Env>(key: K): Env[K] {
+  const parsed = schema.shape[key].safeParse(process.env[key]);
   if (!parsed.success) {
-    console.error("Invalid environment variables:", parsed.error.flatten().fieldErrors);
-    throw new Error("Invalid environment variables - see .env.example");
+    throw new Error(`Invalid ${key} environment variable - see .env.example`);
   }
-  cached = parsed.data;
-  return cached;
+  return parsed.data as Env[K];
 }
 
 export const env = new Proxy({} as Env, {
   get(_target, prop: string) {
-    return load()[prop as keyof Env];
+    if (!(prop in schema.shape)) return undefined;
+    return load(prop as keyof Env);
   },
 }) as Env;

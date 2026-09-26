@@ -2,8 +2,6 @@ import { streamText } from "ai";
 import { MODELS } from "@/lib/ai/groq";
 import { z } from "zod";
 
-export const runtime = "edge";
-
 const Body = z.object({
   query: z.string().min(1).max(2000),
 });

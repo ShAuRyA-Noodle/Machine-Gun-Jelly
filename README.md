@@ -100,7 +100,7 @@ cp .env.example .env.local   # fill in the keys you have
 npm run dev                  # http://localhost:3000
 ```
 
-Only `GROQ_API_KEY` and `GEMINI_API_KEY` are needed for the `/api/echo` route today. The build does not require secrets; env is validated lazily, at request time. See [`.env.example`](./.env.example) for the full list.
+Only `GROQ_API_KEY` is needed for the `/api/echo` route today. The build does not require secrets; each integration's env value is validated lazily when it is used. See [`.env.example`](./.env.example) for the full list.
 
 Scripts:
 

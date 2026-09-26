@@ -53,6 +53,13 @@ export function CommandBar() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ query: value }),
       });
+      if (!res.ok) {
+        throw new Error(
+          res.status === 503
+            ? "The assistant is temporarily unavailable. Please try again later."
+            : `Request failed (${res.status}). Please try again.`,
+        );
+      }
       if (!res.body) throw new Error("no body");
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -63,6 +70,7 @@ export function CommandBar() {
         acc += decoder.decode(chunk, { stream: true });
         setReply(acc);
       }
+      if (!acc.trim()) throw new Error("The assistant returned no response. Please try again.");
     } catch (err) {
       setReply(`error: ${(err as Error).message}`);
     } finally {
